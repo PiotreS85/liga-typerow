@@ -40,11 +40,18 @@ def init_db():
     with db_lock:
         conn = get_db()
         cur  = conn.cursor()
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS players (
-                name TEXT PRIMARY KEY,
-                created_at TIMESTAMP DEFAULT NOW()
-            )''')
+        if USE_POSTGRES:
+            cur.execute('''
+                CREATE TABLE IF NOT EXISTS players (
+                    name TEXT PRIMARY KEY,
+                    created_at TIMESTAMP DEFAULT NOW()
+                )''')
+        else:
+            cur.execute('''
+                CREATE TABLE IF NOT EXISTS players (
+                    name TEXT PRIMARY KEY,
+                    created_at TEXT DEFAULT (datetime('now'))
+                )''')
         cur.execute('''
             CREATE TABLE IF NOT EXISTS matches (
                 id TEXT PRIMARY KEY,
